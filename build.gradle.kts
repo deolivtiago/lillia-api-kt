@@ -11,7 +11,7 @@ plugins {
 version = "0.1"
 group = "com.clarxlabs.lillia"
 
-val kotlinVersion = project.properties.get("kotlinVersion")
+val kotlinVersion = project.properties["kotlinVersion"]
 
 repositories {
     mavenCentral()
@@ -46,8 +46,10 @@ dependencies {
     runtimeOnly("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.postgresql:r2dbc-postgresql")
+    runtimeOnly("io.r2dbc:r2dbc-pool")
     runtimeOnly("org.yaml:snakeyaml")
     testImplementation("io.micronaut:micronaut-http-client")
+    testImplementation("io.projectreactor:reactor-test")
     aotPlugins(platform("io.micronaut.platform:micronaut-platform:4.9.3"))
     aotPlugins("io.micronaut.security:micronaut-security-aot")
 }
