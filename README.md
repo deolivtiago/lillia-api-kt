@@ -1,3 +1,26 @@
+# Lillia API
+
+[![ci](https://github.com/deolivtiago/lillia-api-kt/actions/workflows/ci.yml/badge.svg)](https://github.com/deolivtiago/lillia-api-kt/actions/workflows/ci.yml)
+
+## Setup
+
+Requirements:
+
+- `graalvm v21.0.2`
+- `docker  v28.0.4`
+- `docker-compose v2.38.2`
+- `docker-buildx v0.28.0`
+
+### Getting started
+
+To start your server:
+
+* Rename the `.env.example` file to `.env` and set the environment variables
+* Build docker image with `docker buildx build -t app:latest .`
+* Run docker services with `docker-compose up -d`
+
+Now you can visit [`localhost:8080`](http://localhost:8080) from your browser.
+
 ## Micronaut 4.9.3 Documentation
 
 - [User Guide](https://docs.micronaut.io/4.9.3/guide/index.html)
