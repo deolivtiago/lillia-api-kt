@@ -1,35 +1,25 @@
-# Multi-stage build for Micronaut Native Image with GraalVM
+# stage 1: build app
 
-# Stage 1: Build Native Image
 FROM ghcr.io/graalvm/native-image-community:21 AS build
 
-# Install required build tools
 RUN microdnf install -y findutils
 
-WORKDIR /app
+WORKDIR /home/app
 
-# Copy Gradle wrapper and build files
 COPY build.gradle.kts settings.gradle.kts gradle.properties gradlew ./
 COPY gradle ./gradle
-
-RUN chmod +x ./gradlew
-
-# Copy source code
 COPY src ./src
 
-# Build native image using Micronaut Gradle plugin
 RUN ./gradlew nativeCompile
 
-# Stage 2: Runtime (minimal image)
-FROM gcr.io/distroless/static-debian12
+# state 2: run app
 
-WORKDIR /app
+FROM gcr.io/distroless/java21-debian12
 
-# Copy the native executable from build
-COPY --from=build /app/build/native/nativeCompile/application /app/application
+WORKDIR /home/app
 
-# Expose port
+COPY --from=build /home/app/build/native/nativeCompile/application /home/app/main
+
 EXPOSE 8080
 
-# Run the native application
-ENTRYPOINT ["/app/application"]
+ENTRYPOINT ["/home/app/main"]

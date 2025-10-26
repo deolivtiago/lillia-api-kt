@@ -14,4 +14,10 @@ class FallbackController {
         it.constraintViolations.errors()
             .let { HttpResponse.badRequest(it) }
             .let { Mono.just(it) }
+
+//    @Error(exception = IllegalArgumentException::class, global = true)
+//    fun onArgumentError(it: IllegalArgumentException): Mono<HttpResponse<Map<String, List<String>>>> =
+//        mapOf("errors" to listOf(it.message?.replaceFirstChar(Char::lowercase)!!))
+//            .let { HttpResponse.badRequest(it) }
+//            .let { Mono.just(it) }
 }

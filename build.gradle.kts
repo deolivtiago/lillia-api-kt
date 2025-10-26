@@ -2,10 +2,9 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.25"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.9.25"
     id("com.google.devtools.ksp") version "1.9.25-1.0.20"
-    id("io.micronaut.application") version "4.5.4"
-    id("com.gradleup.shadow") version "8.3.7"
-    id("io.micronaut.test-resources") version "4.5.4"
-    id("io.micronaut.aot") version "4.5.4"
+    id("io.micronaut.application") version "4.6.0"
+    id("com.gradleup.shadow") version "8.3.9"
+    id("io.micronaut.aot") version "4.6.0"
 }
 
 version = "0.1"
@@ -33,6 +32,7 @@ dependencies {
     implementation("io.micronaut.reactor:micronaut-reactor-http-client")
     implementation("io.micronaut.security:micronaut-security")
     implementation("io.micronaut.security:micronaut-security-jwt")
+    implementation("org.springframework.security:spring-security-crypto:6.4.4")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.micronaut.validation:micronaut-validation")
@@ -50,7 +50,9 @@ dependencies {
     runtimeOnly("org.yaml:snakeyaml")
     testImplementation("io.micronaut:micronaut-http-client")
     testImplementation("io.projectreactor:reactor-test")
-    aotPlugins(platform("io.micronaut.platform:micronaut-platform:4.9.3"))
+    testImplementation("org.junit.platform:junit-platform-suite-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    aotPlugins(platform("io.micronaut.platform:micronaut-platform:4.10.0"))
     aotPlugins("io.micronaut.security:micronaut-security-aot")
 }
 
@@ -62,7 +64,18 @@ java {
     sourceCompatibility = JavaVersion.toVersion("21")
 }
 
-graalvmNative.toolchainDetection = false
+kotlin {
+    jvmToolchain(21)
+}
+
+graalvmNative {
+    toolchainDetection.set(false)
+    binaries {
+        named("main") {
+            imageName.set("application")
+        }
+    }
+}
 
 micronaut {
     runtime("netty")
@@ -74,18 +87,19 @@ micronaut {
     aot {
         // Please review carefully the optimizations enabled below
         // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
-        optimizeServiceLoading = false
-        convertYamlToJava = false
-        precomputeOperations = true
-        cacheEnvironment = true
-        optimizeClassLoading = true
-        deduceEnvironment = true
-        optimizeNetty = true
-        replaceLogbackXml = true
+        optimizeServiceLoading.set(true)
+        convertYamlToJava.set(true)
+        precomputeOperations.set(true)
+        cacheEnvironment.set(true)
+        optimizeClassLoading.set(true)
+        deduceEnvironment.set(true)
+        optimizeNetty.set(true)
+        replaceLogbackXml.set(true)
         configurationProperties.put("micronaut.security.jwks.enabled", "false")
     }
 }
 
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
-    jdkVersion = "21"
+    jdkVersion.set("21")
+    baseImage("gcr.io/distroless/java21-debian12")
 }

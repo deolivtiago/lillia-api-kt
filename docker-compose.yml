@@ -1,14 +1,37 @@
 services:
-  postgres:
-    container_name: lillia_dev
+
+  web:
+    container_name: web
+    image: app:latest
+    restart: on-failure:3
+
+    pull_policy: build
+    build: .
+
+    depends_on:
+      - db
+
+    network_mode: host
+
+    env_file:
+      - path: ./default.env
+      - path: ./.env
+        required: false
+
+  db:
+    container_name: db
     image: postgres:17
-    restart: always
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST_AUTH_METHOD=trust
-    ports:
-      - 5432:5432
+    restart: on-failure:3
+
+    env_file:
+      - path: ./default.env
+      - path: ./.env
+        required: false
+
+    network_mode: host
+
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
+
 volumes:
-  pgdata:
+  pg_data:

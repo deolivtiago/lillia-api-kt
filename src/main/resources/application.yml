@@ -49,10 +49,13 @@ micronaut:
 
   serde:
     date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
-    property-naming-strategy: SNAKE_CASE
-    deserialization.ignore-unknown: true
+    property-naming-strategy: CAMEL_CASE
+    deserialization:
+      ignore-unknown: true
+      accept-case-insensitive-enums: true
     serialization:
-      inclusion: ALWAYS
+      inclusion: NON_ABSENT
+      sort-properties-alphabetically: true
       always-serialize-errors-as-list: true
 
   data:

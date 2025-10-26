@@ -15,9 +15,8 @@ Requirements:
 
 To start your server:
 
-* Rename the `.env.example` file to `.env` and set the environment variables
-* Build docker image with `docker buildx build -t app:latest .`
-* Run docker services with `docker-compose up -d`
+* Rename the `default.env` file to `.env` and set the environment variables
+* Build and run docker services with `docker compose up -d`
 
 Now you can visit [`localhost:8080`](http://localhost:8080) from your browser.
 

@@ -1,31 +1,44 @@
 package com.clarxlabs.lillia.entities
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.micronaut.data.annotation.*
-import io.micronaut.data.model.DataType
 import io.micronaut.security.annotation.CreatedBy
 import io.micronaut.security.annotation.UpdatedBy
 import io.micronaut.serde.annotation.Serdeable
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import java.util.*
 
 @Serdeable
-@MappedEntity(value = "roles", alias = "r")
-data class Role(
+@MappedEntity(value = "users", alias = "u")
+data class User(
     @field:Id
-    @field:NotBlank
-    @field:Size(min = 3, max = 64)
-    @field:Pattern(regexp = "^([a-z0-9](_)?)+$", message = "must have a valid format")
-    val id: String = "",
+    @field:AutoPopulated
+    val id: UUID?= null,
 
-    @field:TypeDef(type = DataType.STRING_ARRAY)
-    val permissions: Set<@NotBlank @Pattern(
-        regexp = "^(GET|POST|PUT|DELETE):([a-z0-9][-/]?)+$",
-        message = "must have a valid format"
-    ) String> = emptySet(),
+    @field:NotBlank
+    @field:Size(min = 3, max = 128)
+    @field:Pattern(regexp = "^[\\w.\\-@]+$", message = "must have a valid format")
+    val username: String = "",
+
+    @field:NotBlank
+    @field:Size(min = 6, max = 128)
+    val password: String = "",
+
+    @field:NotBlank
+    @field:Size(min = 2, max = 255)
+    val fullName: String = "",
+
+    @field:Pattern(regexp = "^http.+", message = "must have a valid format")
+    val avatarUrl: String = "",
+
+    val isVerified: Boolean = false,
+
+    @field:NotBlank
+    val roleId: String = "user",
 
     @field:CreatedBy
     val createdBy: String? = "",
@@ -41,6 +54,7 @@ data class Role(
 ) {
     companion object {
         fun isSortingProperty(property: String): Boolean =
-            setOf("id", "createdBy", "updatedBy", "createdAt", "updatedAt").contains(property)
+            setOf("username", "fullName", "avatarUrl", "isVerified", "updatedBy", "createdBy", "updatedAt", "createdAt")
+                .contains(property)
     }
 }
