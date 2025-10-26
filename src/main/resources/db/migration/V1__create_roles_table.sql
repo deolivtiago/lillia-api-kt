@@ -1,11 +1,11 @@
-create table roles (
+create table if not exists roles (
     id text primary key,
 
     permissions text[] default '{}'::text[],
 
-    created_by text not null default '',
-    updated_by text not null default '',
+    created_by text default '',
+    updated_by text default '',
 
-    updated_at timestamptz(0) not null default now(),
-    created_at timestamptz(0) not null default now()
+    updated_at timestamptz(3) default now(),
+    created_at timestamptz(3) default now()
 );
