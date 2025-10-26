@@ -1,24 +1,22 @@
 micronaut:
-  application:
-    name: lillia
+  application.name: lillia
 
   security:
     authentication: bearer
+    session.enabled: false
     reject-not-found: false
     token:
+      refresh.cookie:
+        enabled: true
+        cookie-name: refresh-token
+      cookie.cookie-name: access-token
       jwt:
         signatures:
-          secret:
-            generator:
-              secret: ${JWT_GENERATOR_SIGNATURE_SECRET:a-string-secret-at-least-256-bits-long}
-        #        claims-validators:
-        #          issuer: lillia-api
-        #          audience: lillia-app
+          secret.generator.secret: ${JWT_SECRET_KEY:a-string-secret-at-least-256-bits-long}
+
         generator:
-          access-token:
-            expiration: 86400
-          refresh-token:
-            secret: ${JWT_GENERATOR_SIGNATURE_SECRET:a-string-secret-at-least-256-bits-long}
+          refresh-token.secret: ${JWT_SECRET_KEY:a-string-secret-at-least-256-bits-long}
+          access-token.expiration: 86400
 
     endpoints:
       login:
@@ -47,14 +45,11 @@ micronaut:
         mapping: /swagger-ui/**
 
   serde:
-    time-zone: UTC
-    date-format: yyyy-MM-dd'T'HH:mm:ssXXX
-    property-naming-strategy: CAMEL_CASE
-    deserialization:
-      ignore-unknown: true
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+    property-naming-strategy: SNAKE_CASE
+    deserialization.ignore-unknown: true
     serialization:
       inclusion: ALWAYS
-      #      inclusion: NON_ABSENT
       always-serialize-errors-as-list: true
 
   data:
@@ -67,25 +62,22 @@ micronaut:
 
 datasources:
   default:
-    driver-class-name: org.postgresql.Driver
     db-type: postgres
-    #    url: jdbc:postgresql://localhost:5432/lillia_mn_kt
-    #    username: postgres
-    #    password: postgres
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:${DATABASE_URL:`postgresql://localhost:5432/lillia_dev`}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
 
 r2dbc:
   datasources:
     default:
-      dialect: POSTGRES
       db-type: postgres
-      #      url: r2dbc:postgresql://localhost:5432/lillia_mn_java
-      #      username: postgres
-      #      password: postgres
+      dialect: POSTGRES
+      url: r2dbc:${DATABASE_URL:`postgresql://localhost:5432/lillia_dev`}
+      username: ${POSTGRES_USER:postgres}
+      password: ${POSTGRES_PASSWORD:postgres}
       options:
         protocol: postgres
         driver: pool
 
-flyway:
-  datasources:
-    default:
-      enabled: true
+flyway.datasources.default.enabled: true

@@ -4,7 +4,6 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.25-1.0.20"
     id("io.micronaut.application") version "4.5.4"
     id("com.gradleup.shadow") version "8.3.7"
-    id("io.micronaut.test-resources") version "4.5.4"
     id("io.micronaut.aot") version "4.5.4"
 }
 
@@ -62,7 +61,14 @@ java {
     sourceCompatibility = JavaVersion.toVersion("21")
 }
 
-graalvmNative.toolchainDetection = false
+graalvmNative {
+    toolchainDetection = false
+    binaries {
+        named("main") {
+            imageName = "application"
+        }
+    }
+}
 
 micronaut {
     runtime("netty")
@@ -87,5 +93,5 @@ micronaut {
 }
 
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
-    jdkVersion = "21"
+    jdkVersion.set("21")
 }
