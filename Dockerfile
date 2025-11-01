@@ -17,19 +17,19 @@ RUN chmod +x ./gradlew
 # Copy source code
 COPY src ./src
 
-# Build native image using Micronaut Gradle plugin
-RUN ./gradlew nativeCompile
+# Build using Micronaut Gradle plugin
+RUN ./gradlew clean build -x test --no-daemon
 
 # Stage 2: Runtime (minimal image)
-FROM gcr.io/distroless/static-debian12
+FROM gcr.io/distroless/java21-debian12
 
 WORKDIR /app
 
-# Copy the native executable from build
-COPY --from=build /app/build/native/nativeCompile/application /app/application
+# Copy the executable from build
+COPY --from=build /app/build/libs/*-all.jar /app/application.jar
 
 # Expose port
 EXPOSE 8080
 
-# Run the native application
-ENTRYPOINT ["/app/application"]
+# Run the application
+CMD ["/app/application.jar"]

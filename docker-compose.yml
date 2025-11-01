@@ -1,14 +1,29 @@
 services:
-  postgres:
-    container_name: lillia_dev
-    image: postgres:17
-    restart: always
+
+  web:
+    container_name: web
+    image: app:latest
+    pull_policy: build
+    build: .
+    restart: on-failure:3
+    depends_on:
+      - db
     environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST_AUTH_METHOD=trust
+      DATABASE_URL: postgresql://db:5432/postgres
     ports:
-      - 5432:5432
+      - "8080:8080"
+
+  db:
+    container_name: db
+    image: postgres:17
+    restart: on-failure:3
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
+
 volumes:
-  pgdata:
+  pg_data:
